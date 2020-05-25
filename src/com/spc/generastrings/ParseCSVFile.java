@@ -11,9 +11,10 @@ package com.spc.generastrings;
 import java.io.*;
 import java.util.Arrays;
 
-import com.googlecode.jcsv.reader.CSVEntryParser;
 import com.opencsv.CSVReader;
 
+
+// import com.googlecode.jcsv.reader.CSVEntryParser;
 
 
 public class ParseCSVFile {
@@ -21,10 +22,12 @@ public class ParseCSVFile {
 	/**
 	 * @param args
 	 */
+	String control;
+	boolean resultado;
 	String cabecera = "<?xml version=\"1.0\" encoding=\"utf-8\"?> \n<resources>\n";
 	char c=0;
 	public static void main(String[] args) {
-		if (args[0] == null) {System.out.println("Uso: java -jar ParseCSVFile.jar Traducciones.csv");
+		if (args.length == 0) {System.out.println("Uso: java -jar CVS_to_xml Traducciones.csv");
 		 					System.exit (1);}
 		String filename = args[0];
 		
@@ -33,7 +36,6 @@ public class ParseCSVFile {
         	
         System.out.println("Starting to parse CSV file using opencsv"); 
         parseCSVFile.parseUsingOpenCSV(filename);
-    	
 	}   
 
 	 private void parseUsingOpenCSV(String filename){
@@ -52,9 +54,7 @@ public class ParseCSVFile {
 	            String[] header4 = reader.readNext(); // Idioma que se quiere aprender
 	            
 	        //    FileOutputStream ficherosalida = new FileOutputStream("strings.xml");
-	            
-	        
-	           	            
+
 	            while ((nextLine = reader.readNext()) != null) {
 	                rowNumber++;
 	                for(int i = 0;i< nextLine.length ; i++){ //No interesa la última columna
@@ -77,8 +77,8 @@ public class ParseCSVFile {
 	    	            fileWriter.write(cabecera);
 	    	                  
 	    	            for (int col = 1;col < (nextLine.length - 1); col++){ // No interesa la última columna
-	    	            	if (col <= 5 ){
-        	    	            fileWriter.write("	<string name=\"" + header1[col] +"\"" + ">" + nextLine[col] + "</string>\n");
+	    	            	// -- if (col <= 5 ){
+        	    	         // --  fileWriter.write("	<string name=\"" + header1[col] +"\"" + ">" + nextLine[col] + "</string>\n");
 	    	    	           // fileWriter.write("	<string name=\"" + header1[2] +"\"" + ">" + nextLine[col] + "</string>\n");
 	    	    	           // fileWriter.write("	<string name=\"" + header1[3] +"\"" + ">" + nextLine[col] + "</string>\n"); 
 	    	    	           // fileWriter.write("	<string name=\"" + header1[4] +"\"" + ">" + nextLine[col] + "</string>\n");
@@ -90,25 +90,30 @@ public class ParseCSVFile {
 	    		    	         fileWriter.write("	<string name=\"" + header1[2] +"\"" + ">" + header3[rowNumber] + "</string>\n"); 
 	    		    	         fileWriter.write("	<string name=\"" + header1[3] +"\"" + ">" + header3[rowNumber] + "</string>\n");
 	    		    	         fileWriter.write("	<string name=\"" + header1[4] +"\"" + ">" + header3[rowNumber] + "</string>\n"); */
-	    	            	}
-	    	            		if (col > 5 && col < 78 ){
-	    	    	            	
-	    	            		
+	    	            	// -- }
+								// Esto llegaba hasta la columna 78
+							control = header2[col];
+	    	            	resultado = (col > 5 && col < 97 && control.equals("si"));
+	    	            		if (resultado){
+
 	    	            		fileWriter.write("	<string name=\"" + header1[col] +"\"" + ">" + header4[col] + " -- "+ nextLine[col] + "</string>\n");     
 	    	            		fileWriter.write("	<string name=\"di_" + header1[col] +"\"" + ">" + header4[col] + "</string>\n");     
 	    	            		}
-	    	            		
-	    	            		if (col >= 78) {
-	    	            			fileWriter.write("	<string name=\"" + header1[col] +"\"" + ">" + nextLine[col] + "</string>\n"); 
-	    	            		}
-	    	            	
-	    	            		
+	    	            		else {
+									fileWriter.write("	<string name=\"" + header1[col] +"\"" + ">" + nextLine[col] + "</string>\n");
+								}
+
+								// Esto llegaba hasta la columna 78
+								// Supuestamente, esto ya no hace falta
+	    	            		//if (col >= 97) {
+	    	            		//	fileWriter.write("	<string name=\"" + header1[col] +"\"" + ">" + nextLine[col] + "</string>\n");
+	    	            		//}
+	    	            	 	            		
 	    	            }
 	    	            fileWriter.write("</resources>");       	            
 	    	            fileWriter.close();
 	                }
 	            }
-	   
 	        } catch (FileNotFoundException e) {
 	            // TODO Auto-generated catch block
 	            e.printStackTrace();
@@ -117,8 +122,5 @@ public class ParseCSVFile {
 	            // TODO Auto-generated catch block
 	            e.printStackTrace();
 	        }
-	    } 
-	    
-	    
-	    
+	    }
 }
